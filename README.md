@@ -6,10 +6,10 @@
 
 ```mermaid
 sequenceDiagram
-    participant API as Dataset Serve API
-    participant Front as Web Frontend
-    participant User as User
-    participant Inferer as Inferer(offline)
+    participant API as 🌐 Dataset Serve API
+    participant Front as 💻 Web Frontend
+    actor User as User
+    participant Inferer as 🤖 Inferer(offline)
 
     Front->>API: 📚 Give me a data set?
     API->>Front: 📚 Present for you!

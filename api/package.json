@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "typecheck": "tsc --noEmit ./src/*.ts"
+    "typecheck": "tsc --noEmit ./src/*.ts",
+    "sync": "yarn run clasp push --watch",
+    "deployments":"clasp deployments"
   },
   "dependencies": {
     "typescript": "^4.7.4"

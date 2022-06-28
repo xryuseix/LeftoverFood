@@ -1,17 +1,19 @@
-const onEdit = (e:any) => {
+/** @format */
+
+const onEdit = (event: GoogleAppsScript.Events.SheetsOnEdit) => {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const activeCell = ss.getActiveCell();
   if (activeCell.getColumn() == 5 && ss.getActiveSheet().getName() == "Web") {
-    const newValue = e.value;
-    const oldValue = e.oldValue;
-    if (!e.value) {
+    const newValue = event.value;
+    const oldValue = event.oldValue;
+    if (!event.value) {
       activeCell.setValue("");
     } else {
-      if (!e.oldValue) {
+      if (!event.oldValue) {
         activeCell.setValue(newValue);
       } else {
-        activeCell.setValue(oldValue + ', ' + newValue);
+        activeCell.setValue(oldValue + ", " + newValue);
       }
     }
   }
-}
+};

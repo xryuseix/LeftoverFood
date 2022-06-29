@@ -1,0 +1,129 @@
+openapi: "3.0.0"
+info:
+  title: LeftoverFood Dataset Serve API
+  version: "1.0.0"
+  description: Alexa website and masked email address, phone number data set
+  contact:
+    name: xryuseix
+    url: https://github.com/xryuseix
+  license:
+    name: MIT
+servers:
+  - url: https://script.google.com
+
+paths:
+  /macros/s/{DeployID}/exec:
+    get:
+      parameters:
+        - in: path
+          name: DeployID
+          required: true
+          schema:
+            type: string
+          description: Google Spreadsheet Deploy ID
+          example: AKfycbyW3gxLCodGmE2VULKOUDOCyTi9-915jnHMXNdjEAL4
+        - in: query
+          name: resource
+          required: true
+          schema:
+            type: string
+            enum:
+              - meta
+              - websites
+          description: resource type (`meta` or `websites`)
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/MetaResponse'
+                  - $ref: '#/components/schemas/WebsiteResponse'
+              example:
+                status: success
+                content:
+                  "0*05******2":
+                    PHONE_OR_MAIL: PHONE
+                    BEGIN_CHARS: null
+                    END_CHARS: 1
+                    MIDDLE_CHARS: "1 2"
+
+components:
+  schemas:
+    MetaResponse:
+      type: object
+      description: If the `resource` query is `meta`
+      properties:
+        status:
+          type: string
+          enum:
+            - success
+            - error
+        content:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MetaColumn'
+    MetaColumn:
+      oneOf:
+        - $ref: '#/components/schemas/MetaPhone'
+        - $ref: '#/components/schemas/MetaMail'
+    MetaPhone:
+      type: object
+      description: Masked phone number meta information
+      properties:
+        PHONE_OR_MAIL:
+          type: string
+          enum:
+            - PHONE
+        BEGIN_CHARS:
+          type: number
+        END_CHARS:
+          type: number
+        MIDDLE_CHARS:
+          type: string
+      example:
+        PHONE_OR_MAIL: PHONE
+        BEGIN_CHARS: null
+        END_CHARS: 1
+        MIDDLE_CHARS: "1 2"
+    MetaMail:
+      type: object
+      description: Masked mail address meta information
+      properties:
+        PHONE_OR_MAIL:
+          type: string
+          enum:
+            - MAIL
+        USER_BEGIN:
+          type: number
+        USER_END:
+          type: number
+        USER_CHARS:
+          type: boolean
+        DOMAIN_IS_ALL:
+          type: boolean
+        DOMAIN_BEGIN:
+          type: number
+        DOMAIN_DOT:
+          type: boolean
+        DOMAIN_CHARS:
+          type: boolean
+      example:
+        PHONE_OR_MAIL: MAIL
+        USER_BEGIN: 2
+        USER_END: null
+        USER_CHARS: true
+        DOMAIN_IS_ALL: null
+        DOMAIN_BEGIN: null
+        DOMAIN_DOT: true
+        DOMAIN_CHARS: true
+    WebsiteResponse:
+      type: object
+      description: If the `resource` query is `website`
+      properties:
+        status:
+          type: string
+          enum:
+            - success
+            - error

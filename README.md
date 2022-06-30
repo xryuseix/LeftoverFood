@@ -13,6 +13,7 @@ sequenceDiagram
 
     Front->>API: 📚 Give me a data set?
     API->>Front: 📚 Present for you!
+    Note over API, Inferer: All further processing is offline.
     Front->>Front: ♻️ Rendering...
     User->>Front: 🗣 My public and secret information is this.
     User->>Front: 🗣 I use this Web service.

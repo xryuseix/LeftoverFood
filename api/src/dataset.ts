@@ -37,9 +37,11 @@ const toResponseFormat = (
  */
 const getMetaData = (sheets: GoogleAppsScript.Spreadsheet.Spreadsheet) => {
   const sheet = sheets.getSheetByName("UNIQUE");
+  const lastColChar = String.fromCharCode(
+    "A".charCodeAt(0) + sheet.getLastColumn() - 1
+  );
   const metaData: string[][] = sheet
-    .getRange(`A1:${sheet.getLastColumn()}${sheet.getLastRow()}`)
+    .getRange(`A1:${lastColChar}${sheet.getLastRow()}`)
     .getValues();
-    console.log(metaData)
   return metaData;
 };

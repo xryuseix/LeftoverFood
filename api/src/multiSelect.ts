@@ -1,9 +1,10 @@
 /** @format */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const onEdit = (event: GoogleAppsScript.Events.SheetsOnEdit) => {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const activeCell = ss.getActiveCell();
-  if (activeCell.getColumn() == 5 && ss.getActiveSheet().getName() == "Web") {
+  if (activeCell.getColumn() === 5 && ss.getActiveSheet().getName() === "Web") {
     const newValue = event.value;
     const oldValue = event.oldValue;
     if (!event.value) {

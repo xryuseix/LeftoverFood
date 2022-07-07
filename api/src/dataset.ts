@@ -6,6 +6,7 @@ type APIResponse = {
   content: object;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const doGet = (_event: GoogleAppsScript.Events.DoGet) => {
   const sheets = SpreadsheetApp.getActiveSpreadsheet();
   const content = { data: getMetaData(sheets) };

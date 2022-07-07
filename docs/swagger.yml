@@ -8,6 +8,7 @@ info:
     url: https://github.com/xryuseix
   license:
     name: MIT
+    url: https://github.com/xryuseix/LeftoverFood/blob/main/LICENSE
 servers:
   - url: https://script.google.com
 

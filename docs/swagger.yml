@@ -46,9 +46,8 @@ paths:
                 content:
                   "0*05******2":
                     PHONE_OR_MAIL: PHONE
-                    BEGIN_CHARS: null
                     END_CHARS: 1
-                    MIDDLE_CHARS: "1 2"
+                    MIDDLE_CHARS: [1, 2]
 
 components:
   schemas:
@@ -79,15 +78,19 @@ components:
             - PHONE
         BEGIN_CHARS:
           type: number
+          description: 先頭から数えて分かっている文字数(+81や先頭の0を除く)
         END_CHARS:
           type: number
+          description: 末尾から数えて分かっている文字数
         MIDDLE_CHARS:
-          type: string
+          type: array
+          items:
+            type: number
+          description: 先頭から数えて分かっている文字のインデックスを示す配列(`BEGIN_CHARS`や`END_CHARS`は含まない)
       example:
         PHONE_OR_MAIL: PHONE
-        BEGIN_CHARS: null
         END_CHARS: 1
-        MIDDLE_CHARS: "1 2"
+        MIDDLE_CHARS: [1, 2]
     MetaMail:
       type: object
       description: Masked mail address meta information
@@ -98,18 +101,25 @@ components:
             - MAIL
         USER_BEGIN:
           type: number
+          description: ユーザ名の先頭から数えて分かっている文字数
         USER_END:
           type: number
+          description: ユーザ名の末尾から数えて分かっている文字数
         USER_CHARS:
           type: boolean
+          description: ユーザ名の文字数を示すかどうか
         DOMAIN_IS_ALL:
           type: boolean
+          description: ドメインが全て分かっているかどうか
         DOMAIN_BEGIN:
           type: number
+          description: ドメインの先頭から数えて分かっている文字数
         DOMAIN_DOT:
           type: boolean
+          description: ドットがあるかどうか
         DOMAIN_CHARS:
           type: boolean
+          description: ドメインの文字数を示すかどうか
       example:
         PHONE_OR_MAIL: MAIL
         USER_BEGIN: 2

@@ -104,9 +104,11 @@ class FormatTypeToMetaT<T extends keyof PhoneMetaT | keyof MailMetaT> {
   constructor(contents: [T, string][]) {
     this.contents = contents;
   }
+
   getContent(): typeof this.contents {
     return this.contents;
   }
+
   /**
    * 値が空のプロパティをundefinedに変更する
    */
@@ -116,6 +118,7 @@ class FormatTypeToMetaT<T extends keyof PhoneMetaT | keyof MailMetaT> {
     });
     return this;
   }
+
   /**
    * 型がArrayのプロパティを作成する
    * 元々は半角スペース区切りで記入されている
@@ -131,6 +134,7 @@ class FormatTypeToMetaT<T extends keyof PhoneMetaT | keyof MailMetaT> {
     });
     return this;
   }
+
   /**
    * 型がnumberのプロパティを作成する
    * スプレットシートの仕様上多くのプロパティはstring型で数値が入っている

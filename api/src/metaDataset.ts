@@ -4,7 +4,7 @@ type PhoneMetaT = Readonly<
   { PHONE_OR_MAIL: "PHONE" } & Partial<{
     BEGIN_CHARS: number;
     END_CHARS: number;
-    MIDDLE_CHARS: Array<number>;
+    MIDDLE_CHARS: number[];
   }>
 >;
 
@@ -52,7 +52,7 @@ const getMetaData = (
   const phoneColumnTitles = columnTitles.filter(
     (columnTitle) => columnTitle.phoneOrEmail === "PHONE"
   );
-  const emailColumnTitles = columnTitles.filter(
+  const mailColumnTitles = columnTitles.filter(
     (columnTitle) => columnTitle.phoneOrEmail === "MAIL"
   );
 
@@ -63,21 +63,32 @@ const getMetaData = (
     .map((row: string[]): [string, PhoneMetaT | MailMetaT] => {
       const leakedInfo = row[0];
       const phoneOrEmail = row[1] === "PHONE" ? "phone" : "email";
-      const contents = ((): [keyof PhoneMetaT | keyof MailMetaT, string][] => {
+      const contents = ((): [
+        keyof PhoneMetaT | keyof MailMetaT,
+        string | number | number[] | boolean
+      ][] => {
         switch (phoneOrEmail) {
           case "phone": {
             const phoneContents = zip(
               phoneColumnTitles.map((col) => col.columnTitle),
               row.slice(2)
             ) as [keyof PhoneMetaT, string][];
-            return addUndefiendProperty<keyof PhoneMetaT>(phoneContents);
+            return new FormatTypeToMetaT<keyof PhoneMetaT>(phoneContents)
+              .addUndefiendProperty()
+              .addArrayProperty()
+              .addStr2NumProperty()
+              .getContent();
           }
           case "email": {
-            const emailContents = zip(
-              emailColumnTitles.map((col) => col.columnTitle),
+            const mailContents = zip(
+              mailColumnTitles.map((col) => col.columnTitle),
               row.slice(2)
             ) as [keyof MailMetaT, string][];
-            return addUndefiendProperty<keyof MailMetaT>(emailContents);
+            return new FormatTypeToMetaT<keyof MailMetaT>(mailContents)
+              .addUndefiendProperty()
+              .addArrayProperty()
+              .addStr2NumProperty()
+              .getContent();
           }
         }
       })();
@@ -88,38 +99,56 @@ const getMetaData = (
   return Object.fromEntries(metaResponse) as MetaDataResT;
 };
 
-/**
- * 値が空のプロパティをundefinedに変更する
- * @param 空文字が入ったsheet contents
- * @returns 空文字がundefiendになったsheet contents
- */
-const addUndefiendProperty = <T extends keyof PhoneMetaT | keyof MailMetaT>(
-  contents: [T, string][]
-): [T, string][] => {
-  return contents.map(([key, val]) => {
-    if (val === "") {
-      return [key, undefined];
-    } else {
-      return [key, val];
-    }
-  });
-};
-
-/**
- * 型がArrayのプロパティを作成する
- * 元々は半角スペース区切りで記入されている
- * 面倒なので雑にArrayに変換する
- * @param 半角スペース区切りで配列が入ったsheet contents
- * @returns 空文字がundefiendになったsheet contents
- */
-const addArrayProperty = <T extends keyof PhoneMetaT | keyof MailMetaT>(
-  contents: [T, string][]
-): [T, string | number[]][] => {
-  return contents.map(([key, val]) => {
-    if (key === "MIDDLE_CHARS") {
-      return [key, val.split(" ").map((e) => parseInt(e))];
-    } else {
-      return [key, val];
-    }
-  });
-};
+class FormatTypeToMetaT<T extends keyof PhoneMetaT | keyof MailMetaT> {
+  contents: [T, string | number | number[] | boolean][];
+  constructor(contents: [T, string][]) {
+    this.contents = contents;
+  }
+  getContent(): typeof this.contents {
+    return this.contents;
+  }
+  /**
+   * 値が空のプロパティをundefinedに変更する
+   */
+  addUndefiendProperty(): FormatTypeToMetaT<T> {
+    this.contents = this.contents.map(([key, value]) => {
+      return [key, value === "" ? undefined : value];
+    });
+    return this;
+  }
+  /**
+   * 型がArrayのプロパティを作成する
+   * 元々は半角スペース区切りで記入されている
+   * 面倒なので雑にArrayに変換する
+   */
+  addArrayProperty(): FormatTypeToMetaT<T> {
+    this.contents = this.contents.map(([key, val]) => {
+      if (key === "MIDDLE_CHARS" && typeof val === "string") {
+        return [key, val.split(" ").map((e) => parseInt(e))];
+      } else {
+        return [key, val];
+      }
+    });
+    return this;
+  }
+  /**
+   * 型がnumberのプロパティを作成する
+   * スプレットシートの仕様上多くのプロパティはstring型で数値が入っている
+   */
+  addStr2NumProperty(): FormatTypeToMetaT<T> {
+    this.contents = this.contents.map(([key, val]) => {
+      // FIXME 本当は if(T[key] === number)みたいなことやりたかった
+      // typeでnumberと定義している場合のみ、numberに変換すべき
+      if (typeof val === "string") {
+        try {
+          return [key, parseInt(val)];
+        } catch (_e) {
+          return [key, val];
+        }
+      } else {
+        return [key, val];
+      }
+    });
+    return this;
+  }
+}

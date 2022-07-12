@@ -89,7 +89,7 @@ const getMetaData = (
 };
 
 /**
- * 値空のプロパティをundefinedに変更する
+ * 値が空のプロパティをundefinedに変更する
  * @param 空文字が入ったsheet contents
  * @returns 空文字がundefiendになったsheet contents
  */
@@ -99,6 +99,25 @@ const addUndefiendProperty = <T extends keyof PhoneMetaT | keyof MailMetaT>(
   return contents.map(([key, val]) => {
     if (val === "") {
       return [key, undefined];
+    } else {
+      return [key, val];
+    }
+  });
+};
+
+/**
+ * 型がArrayのプロパティを作成する
+ * 元々は半角スペース区切りで記入されている
+ * 面倒なので雑にArrayに変換する
+ * @param 半角スペース区切りで配列が入ったsheet contents
+ * @returns 空文字がundefiendになったsheet contents
+ */
+const addArrayProperty = <T extends keyof PhoneMetaT | keyof MailMetaT>(
+  contents: [T, string][]
+): [T, string | number[]][] => {
+  return contents.map(([key, val]) => {
+    if (key === "MIDDLE_CHARS") {
+      return [key, val.split(" ").map((e) => parseInt(e))];
     } else {
       return [key, val];
     }

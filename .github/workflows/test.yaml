@@ -1,0 +1,17 @@
+name: Test
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1 
+      - name: Install Dependencies
+        run: yarn --cwd api install
+      - name: Lint
+        run: yarn --cwd api lint
+      - name: Test
+        run: yarn --cwd api test --coverage

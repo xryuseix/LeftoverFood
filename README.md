@@ -1,4 +1,4 @@
-[![pages-build-deployment](https://github.com/xryuseix/LeftoverFood/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/xryuseix/LeftoverFood/actions/workflows/pages/pages-build-deployment)
+[![pages-build-deployment](https://github.com/xryuseix/LeftoverFood/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/xryuseix/LeftoverFood/actions/workflows/pages/pages-build-deployment) [![Test](https://github.com/xryuseix/LeftoverFood/actions/workflows/test.yaml/badge.svg)](https://github.com/xryuseix/LeftoverFood/actions/workflows/test.yaml)
 
 # 🐛Leftover Food
 

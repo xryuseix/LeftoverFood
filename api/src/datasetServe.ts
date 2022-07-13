@@ -11,7 +11,7 @@ type APIErrorResponse = { status: "error"; content: string };
 type APIResponse = APISuccessResponse | APIErrorResponse;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const doGet = (_event: GoogleAppsScript.Events.DoGet) => {
+export const doGet = (_event: GoogleAppsScript.Events.DoGet) => {
   const sheets = SpreadsheetApp.getActiveSpreadsheet();
   const content = getMetaData(sheets);
   if (content) {

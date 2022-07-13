@@ -1,4 +1,5 @@
 /** @format */
+import { zip } from "./utils";
 
 type PhoneMetaT = Readonly<
   { PHONE_OR_MAIL: "PHONE" } & Partial<{
@@ -27,12 +28,12 @@ type MetaDataResT = { [key: string]: PhoneMetaT | MailMetaT };
  * @param sheets スクリプトに紐づけられたスプレッドシート
  * @returns MetaResponse Schema
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getMetaData = (
+export const getMetaData = (
   sheets: GoogleAppsScript.Spreadsheet.Spreadsheet
-): MetaDataResT => {
+): MetaDataResT | null => {
   // スプレットシートの値を取得
   const sheet = sheets.getSheetByName("UNIQUE");
+  if (!sheet) return null;
   const lastColChar = String.fromCharCode(
     "A".charCodeAt(0) + sheet.getLastColumn() - 1
   );
@@ -63,10 +64,7 @@ const getMetaData = (
     .map((row: string[]): [string, PhoneMetaT | MailMetaT] => {
       const leakedInfo = row[0];
       const phoneOrEmail = row[1] === "PHONE" ? "phone" : "email";
-      const contents = ((): [
-        keyof PhoneMetaT | keyof MailMetaT,
-        string | number | number[] | boolean
-      ][] => {
+      const contents = (() => {
         switch (phoneOrEmail) {
           case "phone": {
             const phoneContents = zip(
@@ -100,7 +98,7 @@ const getMetaData = (
 };
 
 class FormatTypeToMetaT<T extends keyof PhoneMetaT | keyof MailMetaT> {
-  contents: [T, string | number | number[] | boolean][];
+  contents: [T, string | number | number[] | boolean | undefined][];
   constructor(contents: [T, string][]) {
     this.contents = contents;
   }
@@ -113,9 +111,10 @@ class FormatTypeToMetaT<T extends keyof PhoneMetaT | keyof MailMetaT> {
    * 値が空のプロパティをundefinedに変更する
    */
   addUndefiendProperty(): FormatTypeToMetaT<T> {
-    this.contents = this.contents.map(([key, value]) => {
-      return [key, value === "" ? undefined : value];
-    });
+    this.contents = this.contents.map(([key, value]) => [
+      key,
+      value === "" ? undefined : value,
+    ]);
     return this;
   }
 

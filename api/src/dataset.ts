@@ -1,16 +1,29 @@
 /** @format */
 // https://script.google.com/macros/s/<Deploy ID>/exec
 
-type APIResponse = {
-  status: "success" | "error";
+import { getMetaData } from "./metaDataset";
+
+type APISuccessResponse = {
+  status: "success";
   content: object;
 };
+type APIErrorResponse = { status: "error"; content: string };
+type APIResponse = APISuccessResponse | APIErrorResponse;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const doGet = (_event: GoogleAppsScript.Events.DoGet) => {
   const sheets = SpreadsheetApp.getActiveSpreadsheet();
   const content = getMetaData(sheets);
-  return toResponseFormat("success", content);
+  if (content) {
+    const success: APISuccessResponse = { status: "success", content };
+    return toResponseFormat(success);
+  } else {
+    const error: APIErrorResponse = {
+      status: "error",
+      content: "unexpected error",
+    };
+    return toResponseFormat(error);
+  }
 };
 
 /**
@@ -20,10 +33,8 @@ const doGet = (_event: GoogleAppsScript.Events.DoGet) => {
  * @returns GASのレスポンスフォーマットに従ったAPIレスポンス
  */
 const toResponseFormat = (
-  status: "success" | "error",
-  content: object
+  response: APIResponse
 ): GoogleAppsScript.Content.TextOutput => {
-  const response: APIResponse = { status, content };
   const output: GoogleAppsScript.Content.TextOutput =
     ContentService.createTextOutput();
   output.setMimeType(ContentService.MimeType.JSON);

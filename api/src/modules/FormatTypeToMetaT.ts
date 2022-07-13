@@ -1,14 +1,14 @@
 /** @format */
-import { PhoneMetaT, MailMetaT } from "../models/metaDataset";
+import { PhoneMetaT, MailMetaT, MetaContentsT } from "../models/metaDataset";
 
 class FormatTypeToMetaT<T extends keyof PhoneMetaT | keyof MailMetaT> {
-  contents: [T, string | number | number[] | boolean | undefined][];
+  private contents: [T, MetaContentsT][];
 
   public constructor(contents: [T, string][]) {
     this.contents = contents;
   }
 
-  public getContent() {
+  public getContent(): [T, MetaContentsT][] {
     return this.contents;
   }
 
@@ -30,7 +30,7 @@ class FormatTypeToMetaT<T extends keyof PhoneMetaT | keyof MailMetaT> {
    */
   addArrayProperty(): FormatTypeToMetaT<T> {
     this.contents = this.contents.map(([key, val]) => {
-      if (key === "MIDDLE_CHARS" && typeof val === "string") {
+      if (key === "MIDDLE_CHARS" && typeof val === "string" && val !== "") {
         return [key, val.split(" ").map((e) => parseInt(e))];
       } else {
         return [key, val];
@@ -47,7 +47,7 @@ class FormatTypeToMetaT<T extends keyof PhoneMetaT | keyof MailMetaT> {
     this.contents = this.contents.map(([key, val]) => {
       // FIXME 本当は if(T[key] === number)みたいなことやりたかった
       // typeでnumberと定義している場合のみ、numberに変換すべき
-      if (typeof val === "string") {
+      if (typeof val === "string" && /^-?\d+$/.test(val)) {
         try {
           return [key, parseInt(val)];
         } catch (_e) {

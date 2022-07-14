@@ -2,15 +2,12 @@
 // https://script.google.com/macros/s/<Deploy ID>/exec
 
 import { getMetaData } from "./metaDataset";
+import {
+  APIResponse,
+  APISuccessResponse,
+  APIErrorResponse,
+} from "./models/APIResponse";
 
-type APISuccessResponse = {
-  status: "success";
-  content: object;
-};
-type APIErrorResponse = { status: "error"; content: string };
-type APIResponse = APISuccessResponse | APIErrorResponse;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const doGet = (_event: GoogleAppsScript.Events.DoGet) => {
   const sheets = SpreadsheetApp.getActiveSpreadsheet();
   const content = getMetaData(sheets);
@@ -32,9 +29,10 @@ export const doGet = (_event: GoogleAppsScript.Events.DoGet) => {
  * @param content レスポンスコンテンツ
  * @returns GASのレスポンスフォーマットに従ったAPIレスポンス
  */
-const toResponseFormat = (
+export const toResponseFormat = (
   response: APIResponse
 ): GoogleAppsScript.Content.TextOutput => {
+  // NOTE: ContentServiceはGASのみで使用可能なので、ローカルでテストができない
   const output: GoogleAppsScript.Content.TextOutput =
     ContentService.createTextOutput();
   output.setMimeType(ContentService.MimeType.JSON);

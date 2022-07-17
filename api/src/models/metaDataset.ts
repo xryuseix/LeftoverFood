@@ -23,3 +23,8 @@ export type MailMetaT = Readonly<
 export type MetaDataResT = { [key: string]: PhoneMetaT | MailMetaT };
 
 export type MetaContentsT = string | number | number[] | boolean | undefined;
+
+export type ColumnTitleT = {
+  phoneOrMail: string;
+  columnTitle: string;
+};

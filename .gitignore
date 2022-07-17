@@ -1,2 +1,3 @@
 api/.clasp.json
 node_modules
+api/dist/index.js

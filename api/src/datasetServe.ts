@@ -1,5 +1,5 @@
 /** @format */
-// https://script.google.com/macros/s/<Deploy ID>/exec
+// https://script.google.com/macros/s/AKfycby5Q9l3cAgvOoWRgxR0mCOvGFsrpd-7I4cGAscRFnVwgJLUa445Rj6d6WPMt3tv3vhmow/exec?source=meta
 
 import { getMetaData } from "./metaDataset";
 import {
@@ -8,18 +8,25 @@ import {
   APIErrorResponse,
 } from "./models/APIResponse";
 
-export const doGet = (_event: GoogleAppsScript.Events.DoGet) => {
-  const sheets = SpreadsheetApp.getActiveSpreadsheet();
-  const content = getMetaData(sheets);
-  if (content) {
-    const success: APISuccessResponse = { status: "success", content };
-    return toResponseFormat(success);
+export const doGet = (event: GoogleAppsScript.Events.DoGet) => {
+  if (typeof event.parameter === "undefined") {
+    return toResponseFormat(makeErrorResponse("It works! but no parameter."));
+  }
+  const dataSource: string | undefined = event.parameter.source;
+  if (["meta", "websites"].includes(dataSource)) {
+    const sheets = SpreadsheetApp.getActiveSpreadsheet();
+    if (dataSource === "meta") {
+      const content = getMetaData(sheets);
+      if (content !== null) {
+        return toResponseFormat(makeSuccessResponse(content));
+      } else {
+        return toResponseFormat(makeErrorResponse("No data found."));
+      }
+    } else if (dataSource === "websites") {
+      return toResponseFormat(makeSuccessResponse({ dataSource: "websites" }));
+    }
   } else {
-    const error: APIErrorResponse = {
-      status: "error",
-      content: "unexpected error",
-    };
-    return toResponseFormat(error);
+    return toResponseFormat(makeErrorResponse("Undefined data source :("));
   }
 };
 
@@ -38,4 +45,20 @@ export const toResponseFormat = (
   output.setMimeType(ContentService.MimeType.JSON);
   output.setContent(JSON.stringify(response));
   return output;
+};
+
+const makeSuccessResponse = (content: object) => {
+  const success: APISuccessResponse = {
+    status: "success",
+    content,
+  };
+  return success;
+};
+
+const makeErrorResponse = (errMsg: string) => {
+  const error: APIErrorResponse = {
+    status: "error",
+    content: errMsg,
+  };
+  return error;
 };

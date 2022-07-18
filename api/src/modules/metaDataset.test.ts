@@ -1,7 +1,7 @@
 /** @format */
 
 import { getTitles, getFilterdColumnTitles } from "./metaDataset";
-import { ColumnTitleT } from "./models/metaDataset";
+import { ColumnTitleT } from "../models/metaDataset";
 
 test("getTitle", () => {
   const row0 = [

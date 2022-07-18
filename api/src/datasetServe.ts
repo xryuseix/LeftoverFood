@@ -1,7 +1,7 @@
 /** @format */
 // https://script.google.com/macros/s/AKfycby5Q9l3cAgvOoWRgxR0mCOvGFsrpd-7I4cGAscRFnVwgJLUa445Rj6d6WPMt3tv3vhmow/exec?source=meta
 
-import { getMetaData } from "./metaDataset";
+import { getMetaData } from "./modules/metaDataset";
 import {
   APIResponse,
   APISuccessResponse,

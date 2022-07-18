@@ -1,12 +1,12 @@
 /** @format */
 import { zip } from "./utils";
-import FormatTypeToMetaT from "./modules/FormatTypeToMetaT";
+import FormatTypeToMetaT from "../modules/FormatTypeToMetaT";
 import {
   PhoneMetaT,
   MailMetaT,
   MetaDataResT,
   ColumnTitleT,
-} from "./models/metaDataset";
+} from "../models/metaDataset";
 
 /**
  * マスクされた電話番号に対するメタデータを取得する

@@ -1,7 +1,9 @@
 /** @format */
-// https://script.google.com/macros/s/AKfycby5Q9l3cAgvOoWRgxR0mCOvGFsrpd-7I4cGAscRFnVwgJLUa445Rj6d6WPMt3tv3vhmow/exec?source=meta
+// https://script.google.com/macros/s/<Deploy ID>/exec?source=meta
+// https://script.google.com/macros/s/<Deploy ID>/exec?source=websites
 
 import { getMetaData } from "./modules/metaDataset";
+import { getWebsiteData } from "./modules/webDataset";
 import {
   APIResponse,
   APISuccessResponse,
@@ -23,7 +25,12 @@ export const doGet = (event: GoogleAppsScript.Events.DoGet) => {
         return toResponseFormat(makeErrorResponse("No data found."));
       }
     } else if (dataSource === "websites") {
-      return toResponseFormat(makeSuccessResponse({ dataSource: "websites" }));
+      const content = getWebsiteData(sheets);
+      if (content !== null) {
+        return toResponseFormat(makeSuccessResponse(content));
+      } else {
+        return toResponseFormat(makeErrorResponse("No data found."));
+      }
     }
   } else {
     return toResponseFormat(makeErrorResponse("Undefined data source :("));

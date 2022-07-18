@@ -22,16 +22,16 @@ paths:
           schema:
             type: string
           description: Google Spreadsheet Deploy ID
-          example: AKfycbyW3gxLCodGmE2VULKOUDOCyTi9-915jnHMXNdjEAL4
+          example: AKfycby5Q9l3cAgvOoWRgxR0mCOvGFsrpd-7I4cGAscRFnVwgJLUa445Rj6d6WPMt3tv3vhmow
         - in: query
-          name: resource
+          name: source
           required: true
           schema:
             type: string
             enum:
               - meta
               - websites
-          description: resource type (`meta` or `websites`)
+          description: source type (`meta` or `websites`)
       responses:
         '200':
           description: Success
@@ -53,7 +53,7 @@ components:
   schemas:
     MetaResponse:
       type: object
-      description: If the `resource` query is `meta`
+      description: If the `source` query is `meta`
       properties:
         status:
           type: string
@@ -131,10 +131,21 @@ components:
         DOMAIN_CHARS: true
     WebsiteResponse:
       type: object
-      description: If the `resource` query is `website`
+      description: If the `source` query is `website`
       properties:
         status:
           type: string
           enum:
             - success
             - error
+        content:
+          type: array
+          items:
+            type: object
+            properties:
+              domain:
+                type: string
+              date:
+                type: string
+              isNotifications:
+                type: boolean

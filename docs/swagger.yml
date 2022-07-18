@@ -149,3 +149,19 @@ components:
                 type: string
               isNotifications:
                 type: boolean
+              leakedInfo:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    input:
+                      type: string
+                      enum:
+                        - mail
+                        - phone
+                        - userName
+                        - realName
+                    output:
+                      type: array
+                      items:
+                        type: string
